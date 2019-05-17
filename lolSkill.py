@@ -6,8 +6,7 @@ import itertools
 from collections import defaultdict
 
 
-
-path = "C:\\Users\\o.frans\\Downloads\\leagueoflegends\\"
+path = "/Users/oswin/Projects/Python/Pikachu/leagueoflegends/" #"C:\\Users\\o.frans\\Downloads\\leagueoflegends\\"
 
 df = pd.read_csv(path+"matchinfo.csv")
 
@@ -35,15 +34,17 @@ def stackIT(dataframe) :
 	return pd.concat(dfList, ignore_index=True).drop_duplicates()
 	#return list(set(list(  pd.concat(dfList, ignore_index=True) ) ) )  #.groupby("player")
 
-#print(stackIT(df2015))
-
+#this is a a df with all player teams combo
 stacked2015 = stackIT(df2015)
+#print(stacked2015)
 
+#instantiate a trueskill rating object in a dict for all the players
 player2015Dict = {}
 
 for p in list(stacked2015["player"] ) :
 	player2015Dict[p] = trueskill.Rating()
  
+#create teams for these objects
 teams2015Dict = defaultdict(lambda: [])
 
 for index, row in stacked2015.iterrows(): #.itertuples(index=False):
@@ -54,12 +55,17 @@ for index, row in stacked2015.iterrows(): #.itertuples(index=False):
 	else:	
 		teams2015Dict[row["team"]] = [ player2015Dict[row["player"]] ]
 
-#create teams for these objects
-for z in teams2015Dict.values() :
-	print(z)
+
+#for z in teams2015Dict.values() :
+#	print(z)
 
 #update ratings for matches
 #iter over the matches
 #based on matches you update the ratings
 
 #at the end calc win probs of different teams
+
+
+#end result you want is modular clean code that cals the trueskill rating of teams for a given dataset and can then be used to predict the probabilty
+#also useable as input for other models
+#have a nice write up for r/leagueoflegends
