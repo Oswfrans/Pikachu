@@ -70,6 +70,17 @@ def win_probability(team1, team2):
     ts = trueskill.global_env()
     return ts.cdf(delta_mu / denom)
 
+from trueskill import Rating
+from math import sqrt
+from scipy import stats
+from scipy.stats import norm
+
+
+def Pwin(rAlist=[Rating()],  rBlist=[Rating()]):
+    deltaMu = sum( [x.mu for x in rAlist])  - sum( [x.mu for x in  rBlist])
+    rsss = sqrt(sum( [x.sigma**2 for x in  rAlist]) + sum( [x.sigma**2 for x in rBlist]) )
+    return norm.cdf(deltaMu/rsss)
+
 """
 # calculate new ratings
 rating_groups = [{p1: p1.rating, p2: p2.rating}, {p3: p3.rating}]
@@ -78,6 +89,8 @@ rated_rating_groups = env.rate(rating_groups, ranks=[0, 1])
 for player in [p1, p2, p3]:
     player.rating = rated_rating_groups[player.team][player]
 """
+
+env = trueskill.global_env()
 
 #should this be a list?
 progressionList =[]
@@ -89,14 +102,16 @@ for index, row in df2015.iterrows():
 
 	#save current elo and win probability in a list or df
 	#not sure if this works as well
-	progressionList.append( [ blueTeam, redTeam, win_probability(blueTeam, redTeam ) ] )
+	progressionList.append( [ blueTeam, redTeam, Pwin(blueTeam, redTeam ) ] )
 	#who won? based on who won update elo
 	if row['bResult']==1:
-		rated_rating_groups= env.rate( [blueTeam, redTeam] , ranks(0,1) )
+		rated_rating_groups= env.rate( [blueTeam, redTeam] , ranks= [0,1] )
 	else:
-		rated_rating_groups= env.rate( [blueTeam, redTeam] , ranks(1,0) )
+		rated_rating_groups= env.rate( [blueTeam, redTeam] , ranks=[1,0] )
 	
 	# save new ratings
+	#need to figure out how to properly assign credit
+	print(rated_rating_groups)
 	for player in blueTeam + redTeam:
 		player.rating = rated_rating_groups[player.team][player]
 
