@@ -107,12 +107,21 @@ def pop_bench(team):
 
 #this should iter over all the matches and update the elos
 for index, row in df2015.iterrows():
-	blueTeam = teams2015Dict[row['blueTeamTag']]
-	redTeam = teams2015Dict[row['redTeamTag']]
+	#construct the teams from the playersdict
+	redTeamPositions = ["red"+p for p in positions] #["redTop", "redMiddle", "redJungle", "redADC", "redSupport"]
+	blueTeamPostions = ["blue"+p for p in positions] #["blueTop", "blueMiddle", "blueJungle", "blueADC", "blueSupport"]
+	blueTeam = [player2015Dict[row[z]] for z in blueTeamPostions]
+ 	redTeam = [player2015Dict[row[z]] for z in redTeamPositions]
+	
+	bluePlayers= [row[z] for z in blueTeamPostions]
+	redPlayers = [row[z] for z in redTeamPositions]
+	
+	#blueTeam = teams2015Dict[row['blueTeamTag']]
+	#redTeam = teams2015Dict[row['redTeamTag']]
 
 	#need to filter out players that are not playing
-	blueTeam = pop_bench(blueTeam)
-	redTeam = pop_bench(redTeam)
+	#blueTeam = pop_bench(blueTeam)
+	#redTeam = pop_bench(redTeam)
 
 	#save current elo and win probability in a list or df
 	#not sure if this works as well
@@ -125,7 +134,13 @@ for index, row in df2015.iterrows():
 	else:
 		rated_rating_groups= env.rate( [blueTeam, redTeam] , ranks=[1,0] )
 	
+	#!!!!!!!!!!!!!!
 	# save new ratings
+	#loop over the players and the raing objects
+	for player in rated_rating_groups:
+		
+		player2015Dict[]
+
 	#need to figure out how to properly assign credit
 	print(rated_rating_groups)
 	
@@ -139,7 +154,7 @@ for index, row in df2015.iterrows():
 	#then we have a single source of truth
 	#if we only do team construction at inference
 	#also prevents  hanging stuff
-	
+
 	#ok so in the teams2015dict we update the players that just played
 	#teams2015Dict[row["blueTeamTag"]]
 
@@ -187,6 +202,9 @@ print(win_probability("TSM","Cloud9", env))
 
 #at the end calc win probs of different teams
 
+#how do we make it so that we can easily adept it to other type of files and other sports?
+#some type of clojure-like description?
+#we have functions that do the important things, then we describe what the specifics of our use case either in a seperate file or at the start of the file
 
 #end result you want is modular clean code that cals the trueskill rating of teams for a given dataset and can then be used to predict the probabilty
 #also useable as input for other models
