@@ -1,6 +1,9 @@
 import pandas as pd
 import trueskill
 
+#fix these functions
+#make it dependent on the confiq
+#add docstring
 
 def stack_it(dataframe):
     #stack all unique players in one column

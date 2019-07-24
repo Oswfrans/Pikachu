@@ -1,7 +1,8 @@
-from src.elo.data_prep import stack_it, prep_dict
-from src.elo.rating_util import iter_frame, win_prob
-from elo_config import path, positions1, positions2
-
+from ..src.elo.data_prep import stack_it, prep_dict
+from ..src.elo.rating_util import iter_frame, win_prob
+from ..elo_config import path, positions1, positions2
+import trueskill
+import pandas as pd
 
 def main():
     #!!!!
@@ -16,8 +17,9 @@ def main():
     player_dict = prep_dict(stacked)
 
     player_dict, match_result, player_progression = iter_frame(
-        player_dict, df, position1, position2)
+        player_dict, df, positions1, positions2)
 
+    #write stuff as csv's to output folder
 
 if __name__ == "__main__":
     main()
@@ -29,11 +31,13 @@ if __name__ == "__main__":
 # [x] streamline the win probablity function
 # [x] Save player progression information ??
 # [/] seperate and define all lol-specific stuff in configurable values
-# [] seperate stuff over files and functions
+# [x] seperate stuff over files and functions
+# [] fix stack_it function
 # [] write docstrings for all the functions
+# [] write stuff to csv in main function
 # [x] make the code year agnostic
 # [/] make sure all hardcoded stuff is seperated out
-# [] add correct structure
+# [x] add correct structure
 # [] add tests
 # [] add coverage % for the tests
 # [] add pipenv structure to ensure correct dependencies
