@@ -3,161 +3,191 @@ import numpy as np
 
 import trueskill
 import itertools
+from datetime import datetime
+#from itertools import chain  #import itertools
 from collections import defaultdict
 
-import itertools
 import math
-
 from trueskill import Rating
 from math import sqrt
 from scipy import stats
 from scipy.stats import norm
 
-path = "/Users/oswin/Projects/Python/Pikachu/leagueoflegends/"  #"C:\\Users\\o.frans\\Downloads\\leagueoflegends\\"
+#these all should go in the config file
+path = "/Users/oswin/Projects/Python/Pikachu/data/matchinfo.csv"  #"C:\\Users\\o.frans\\Downloads\\data\\"
 
-df = pd.read_csv(path + "matchinfo.csv")
-
+#df = pd.read_csv(path + "matchinfo.csv")
 colors = ["red", "blue"]
 positions = ["Top", "Jungle", "Middle", "ADC", "Support"]
 
+positions1 = [
+    "blue" + p for p in positions
+]  #["blueTop", "blueMiddle", "blueJungle", "blueADC", "blueSupport"]
+
+positions2 = ["red" + p for p in positions
+              ]  #["redTop", "redMiddle", "redJungle", "redADC", "redSupport"]
+
 # seperate by year
-df2015 = df[(df.Year == 2015)]
-df2016 = df[(df.Year == 2016)]
-df2017 = df[(df.Year == 2017)]
-df2018 = df[(df.Year == 2018)]
-
-# for each unique player instantiate a rating object
+# df2015 = df[(df.Year == 2015)]
+# df2016 = df[(df.Year == 2016)]
+# df2017 = df[(df.Year == 2017)]
+# df2018 = df[(df.Year == 2018)]
 
 
-def stackIT(dataframe):
+def stack_it(dataframe):
     #stack all unique players in one column
     #add teams to this
     dfList = []
     for pos in positions:
         for col in colors:
-            # print(dataframe[col+pos].head)
             dfList.append(dataframe[[col + pos, col + "TeamTag"
                                      ]].rename(index=str,
                                                columns={
                                                    col + pos: "player",
                                                    col + "TeamTag": "team"
                                                }))
-
-    #pd.concat([returnDF, dataframe[col+pos].rename(columns={col+pos, "player"}) ], ignore_index=True, axis=1 )
     return pd.concat(dfList, ignore_index=True).drop_duplicates()
-    #return list(set(list(  pd.concat(dfList, ignore_index=True) ) ) )  #.groupby("player")
 
-
-#this is a a df with all player teams combo
-stacked2015 = stackIT(df2015)
-#print(stacked2015)
 
 #instantiate a trueskill rating object in a dict for all the players
-player2015Dict = {}
+def prep_dict(stckd):
+    player_dict = {}
 
-for p in list(stacked2015["player"]):
-    player2015Dict[p] = trueskill.Rating()
-
-
-def win_probability(team1, team2, envir):
-    delta_mu = sum(r.mu for r in team1) - sum(r.mu for r in team2)
-    sum_sigma = sum(r.sigma**2 for r in itertools.chain(team1, team2))
-    size = len(team1) + len(team2)
-    denom = math.sqrt(size * (envir.BETA * envir.BETA) + sum_sigma)
-    ts = trueskill.global_env()
-    return ts.cdf(delta_mu / denom)
+    for p in list(stckd["player"]):
+        player_dict[p] = trueskill.Rating()
+    return player_dict
 
 
-def Pwin(rAlist=[Rating()], rBlist=[Rating()]):
+def win_prob(rAlist=[Rating()], rBlist=[Rating()]):
     deltaMu = sum([x.mu for x in rAlist]) - sum([x.mu for x in rBlist])
     rsss = sqrt(
         sum([x.sigma**2 for x in rAlist]) + sum([x.sigma**2 for x in rBlist]))
     return norm.cdf(deltaMu / rsss)
 
 
-env = trueskill.global_env()
+def main():
+    #!!!!
+    #figure out how to pass args and
 
-# should this be a list?
-progressionList = []
+    env = trueskill.global_env()
+    # should this be a list?
+    #works but note for future optimization
 
-# could clean up the conditional assignment here
-# def pop_bench(team):
-#     enum_col_pos = [row["blue"+y] for y in positions] if team == blueTeam else [row["red"+y] for y in positions]
-#     for k in team.keys():
-#         if k not in enum_col_pos:
-#             team.pop(k, None)
-#     return team
+    df = pd.read_csv(path)
+    stacked = stack_it(df)
+    player_dict = prep_dict(stacked)
 
-#this should iter over all the matches and update the elos
-for index, row in df2015.iterrows():
-    #construct the teams from the playersdict
-    redTeamPositions = [
-        "red" + p for p in positions
-    ]  #["redTop", "redMiddle", "redJungle", "redADC", "redSupport"]
-    blueTeamPostions = [
-        "blue" + p for p in positions
-    ]  #["blueTop", "blueMiddle", "blueJungle", "blueADC", "blueSupport"]
-    blueTeam = [player2015Dict[row[z]] for z in blueTeamPostions]
-    redTeam = [player2015Dict[row[z]] for z in redTeamPositions]
+    player_dict, match_result, player_progression = iter_frame(
+        player_dict, df, position1, position2)
 
-    bluePlayers = [row[z] for z in blueTeamPostions]
-    redPlayers = [row[z] for z in redTeamPositions]
 
-    #save current elo and win probability in a list or df
-    #not sure if this works as well
-    #this would then be the two teams, the predicted probability and the actual result
-    progressionList.append([
-        row['blueTeamTag'], row['redTeamTag'],
-        Pwin(blueTeam, redTeam), row['bResult']
-    ])
+#this will also be args in the future or at least config file
+team1_tag_col = "blueTeamTag"
+team2_tag_col = "redTeamTag"
+result_col = "bResult"
 
-    #who won? based on who won update elo
-    if row['bResult'] == 1:
-        rated_rating_groups = env.rate([blueTeam, redTeam], ranks=[0, 1])
+
+def iter_frame(player_dict, dataframe, position1, position2):
+    """
+    Function that iterates over the specified dataframe of match results and 
+    updates the TrueSkill rating of the players in a dictionary object.
+    Also results in lists that show the progression of the rating and predicitons over the matches
+    player_dict :   Dictionary object of the players and the Trueskill rating. This is updated throughout the function
+    dataframe :     Dataframe which contains the match result that are used to update the ratings
+    position1 :     Column names detailling the different players in team1
+    position2 :     Column names detailling the different players in team2
+    returns the updated player_dict, a list of matchresults and predictions and a list showing the progression of individual players
+    """
+    progression_list = []
+    progression_players = []
+    #this should iter over all the matches and update the elos
+    for index, row in dataframe.iterrows():
+        #construct the teams from the playersdict
+
+        team1 = [player_dict[row[z]] for z in position1]
+        team2 = [player_dict[row[z]] for z in position2]
+
+        players1 = [row[z] for z in position1]
+        players2 = [row[z] for z in position2]
+
+        #save current predicted win chance of the past and win probability in a list or df
+        progression_list.append([
+            row[team1_tag_col], row[team2_tag_col],
+            win_prob(team1, team2), row[result_col]
+        ])
+        #save the rating
+        progression_players.append(
+            [[row[z], player_dict[row[z]],
+              datetime.now()] for z in position1 + position2])
+
+        player_dict = save_ratings(update_elo(row[result_col]),
+                                   players1 + players2, player_dict)
+
+    return player_dict, progression_list, progression_players
+
+
+#function that creates new rating groups
+def update_elo(first_win, envir, team1, team2):
+    """
+    Function that updates the rating objects based on who won
+    first_win : boolean that is 1 if team1 won and 0 if team 2 won
+    envir :     Trueskill environment object
+    team1 :     list of rating objects of the players of the first team
+    team2 :     list of rating object of the players of the second team
+    returns a list of list of updated ratings of the players
+    """
+    if first_win == 1:
+        rating_groups = envir.rate([team1, team2], ranks=[0, 1])
     else:
-        rated_rating_groups = env.rate([blueTeam, redTeam], ranks=[1, 0])
+        rating_groups = envir.rate([team1, team2], ranks=[1, 0])
 
+    return rating_groups
+
+
+def save_ratings(groups, players, p_dict):
+    """
+    Function that updates the players dictionary with the new rating objects.
+    groups :        a nested list of the new rating objects
+    players :       List of players that have new ratings
+    player_dict :   dictionary of players and their ratings, which you update 
+    """
     # save new ratings
-    # loop over the players and the raing objects
-
-    #example
-    # for player in [p1, p2, p3]:
-    #     player.rating = rated_rating_groups[player.team][player]
-
     i = 0
-    for player in bluePlayers + redPlayers:
-        if i <= 5:
-            player2015Dict[player] = rated_rating_groups[0][i]
-        #	#player.rating = rated_rating_groups[player.team][player]
-        elif i > 5:
-            print(i)
-            player2015Dict[player] = rated_rating_groups[1][i - 5]
+    for player in players:
+        if i <= 4:
+            p_dict[player] = groups[0][i]
+        elif i > 4:
+            p_dict[player] = groups[1][i - 5]
         i += 1
+    return p_dict
+
 
 # create dataframe with player progress and deliver as csv function
 
 # this should go in a test eventually
 TSM = [
-    player2015Dict[z]
-    for z in ["Bjergsen", "Hauntzer", "Doublelift", "Amazing", "Biofrost"]
+    player_dict[z]
+    for z in ["Bjergsen", "Hauntzer", "Doublelift", "Amazing", "Xpecial"]
 ]
 Cloud9 = [
-    player2015Dict[z]
-    for z in ["Hai", "Sneaky", "Lemonnation", "Balls", "Meteos"]
+    player_dict[z] for z in ["Hai", "Sneaky", "Xpecial", "Balls", "Meteos"]
 ]
 
-print(win_probability(TSM, Cloud9, env))
+print(win_prob(TSM, Cloud9))
+#print(win_probability(TSM, Cloud9, env))
 
 #at the end return two dataframes, player ratings and progressionlist (maybe player progression?)
 
-# [] streamline the win probablity function
-# [] Save player progression information ??
+# [x] streamline the win probablity function
+# [x] Save player progression information ??
+# [/] seperate and define all lol-specific stuff in configurable values
 # [] seperate stuff over files and functions
 # [] write docstrings for all the functions
-# [] make the code year agnostic
+# [x] make the code year agnostic
 # [] make sure all hardcoded stuff is seperated out
 # [] add correct structure
 # [] add tests
+# [] add coverage % for the tests
 # [] add pipenv structure to ensure correct dependencies
 # [] seperate function that generates some graphs ?
 
