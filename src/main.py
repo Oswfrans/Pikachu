@@ -1,5 +1,7 @@
-from Pikachu.src.elo.data_prep import stack_it, prep_dict
-from Pikachu.src.elo.rating_util import iter_frame, win_prob
+from ..src.elo.data_prep import stack_it, prep_dict
+#from ..
+#from Pikachu.src.elo.data_prep import stack_it, prep_dict
+#from Pikachu.src.elo.rating_util import iter_frame, win_prob
 from Pikachu.elo_config import path, positions1, positions2
 import trueskill
 import pandas as pd
