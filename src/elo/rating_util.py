@@ -13,7 +13,7 @@ from math import sqrt
 from scipy import stats
 from scipy.stats import norm
 
-from elo_config import team1_tag_col, team2_tag_col, result_col
+from pikachu.elo_config import team1_tag_col, team2_tag_col, result_col
 
 
 def win_prob(rAlist=[Rating()], rBlist=[Rating()]):

@@ -1,6 +1,6 @@
-from ..src.elo.data_prep import stack_it, prep_dict
-from ..src.elo.rating_util import iter_frame, win_prob
-from ..elo_config import path, positions1, positions2
+from Pikachu.src.elo.data_prep import stack_it, prep_dict
+from Pikachu.src.elo.rating_util import iter_frame, win_prob
+from Pikachu.elo_config import path, positions1, positions2
 import trueskill
 import pandas as pd
 
@@ -32,11 +32,11 @@ if __name__ == "__main__":
 # [x] Save player progression information ??
 # [/] seperate and define all lol-specific stuff in configurable values
 # [x] seperate stuff over files and functions
-# [] fix stack_it function
-# [] write docstrings for all the functions
+# [x] fix stack_it function
+# [x] write docstrings for all the functions
 # [] write stuff to csv in main function
 # [x] make the code year agnostic
-# [/] make sure all hardcoded stuff is seperated out
+# [x] make sure all hardcoded stuff is seperated out
 # [x] add correct structure
 # [] add tests
 # [] add coverage % for the tests

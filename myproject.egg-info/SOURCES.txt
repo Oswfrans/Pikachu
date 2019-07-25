@@ -1,0 +1,11 @@
+README.md
+setup.py
+myproject.egg-info/PKG-INFO
+myproject.egg-info/SOURCES.txt
+myproject.egg-info/dependency_links.txt
+myproject.egg-info/top_level.txt
+src/__init__.py
+src/main.py
+src/elo/__init__.py
+src/elo/data_prep.py
+src/elo/rating_util.py
