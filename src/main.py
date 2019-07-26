@@ -1,27 +1,21 @@
-from ..src.elo.data_prep import stack_it, prep_dict
-#from ..
-#from Pikachu.src.elo.data_prep import stack_it, prep_dict
-#from Pikachu.src.elo.rating_util import iter_frame, win_prob
-from Pikachu.elo_config import path, positions1, positions2
-import trueskill
-import pandas as pd
+from src.elo.data_prep import stack_it, prep_dict
+from src.elo.rating_util import iter_frame, win_prob
+from elo_config import path, positions1, positions2
+
 
 def main():
     #!!!!
     #figure out how to pass args and
 
     env = trueskill.global_env()
-    # should this be a list?
-    #works but note for future optimization
 
     df = pd.read_csv(path)
     stacked = stack_it(df)
     player_dict = prep_dict(stacked)
 
     player_dict, match_result, player_progression = iter_frame(
-        player_dict, df, positions1, positions2)
+        player_dict, df, position1, position2)
 
-    #write stuff as csv's to output folder
 
 if __name__ == "__main__":
     main()
@@ -34,12 +28,12 @@ if __name__ == "__main__":
 # [x] Save player progression information ??
 # [/] seperate and define all lol-specific stuff in configurable values
 # [x] seperate stuff over files and functions
-# [x] fix stack_it function
-# [x] write docstrings for all the functions
-# [] write stuff to csv in main function
+# [] write docstrings for all the functions
+# [] update docstrings to google format
+# [] make everything pipenv and good
 # [x] make the code year agnostic
-# [x] make sure all hardcoded stuff is seperated out
-# [x] add correct structure
+# [/] make sure all hardcoded stuff is seperated out
+# [] add correct structure
 # [] add tests
 # [] add coverage % for the tests
 # [] add pipenv structure to ensure correct dependencies
