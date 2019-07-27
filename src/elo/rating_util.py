@@ -2,7 +2,7 @@ import pandas as pd
 import numpy as np
 
 import trueskill
-import itertools
+#import itertools
 from datetime import datetime
 #from itertools import chain  #import itertools
 from collections import defaultdict
@@ -13,7 +13,8 @@ from math import sqrt
 from scipy import stats
 from scipy.stats import norm
 
-from pikachu.elo_config import team1_tag_col, team2_tag_col, result_col
+from Pikachu.elo_config import team1_tag_col, team2_tag_col, result_col
+#from pikachu.elo_config import team1_tag_col, team2_tag_col, result_col
 
 
 def win_prob(rAlist=[Rating()], rBlist=[Rating()]):

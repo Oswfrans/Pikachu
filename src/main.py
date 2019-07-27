@@ -1,7 +1,7 @@
 from src.elo.data_prep import stack_it, prep_dict
 from src.elo.rating_util import iter_frame, win_prob
 from elo_config import path, positions1, positions2
-
+import pandas as pd
 
 def main():
     #!!!!
