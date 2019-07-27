@@ -1,7 +1,8 @@
-from src.elo.data_prep import stack_it, prep_dict
-from src.elo.rating_util import iter_frame, win_prob
-from elo_config import path, positions1, positions2
+from Pikachu.src.elo.data_prep import stack_it, prep_dict
+from Pikachu.src.elo.rating_util import iter_frame, win_prob
+from Pikachu.elo_config import path, positions1, positions2
 import pandas as pd
+import trueskill
 
 def main():
     #!!!!
@@ -14,7 +15,7 @@ def main():
     player_dict = prep_dict(stacked)
 
     player_dict, match_result, player_progression = iter_frame(
-        player_dict, df, position1, position2)
+        player_dict, df, positions1, positions2)
 
 
 if __name__ == "__main__":
@@ -26,17 +27,17 @@ if __name__ == "__main__":
 
 # [x] streamline the win probablity function
 # [x] Save player progression information ??
-# [/] seperate and define all lol-specific stuff in configurable values
+# [x] seperate and define all lol-specific stuff in configurable values
 # [x] seperate stuff over files and functions
-# [] write docstrings for all the functions
+# [x] write docstrings for all the functions
 # [] update docstrings to google format
-# [] make everything pipenv and good
+# [/] make everything pipenv and good
 # [x] make the code year agnostic
-# [/] make sure all hardcoded stuff is seperated out
-# [] add correct structure
+# [x] make sure all hardcoded stuff is seperated out
+# [x] add correct structure
 # [] add tests
 # [] add coverage % for the tests
-# [] add pipenv structure to ensure correct dependencies
+# [x] add pipenv structure to ensure correct dependencies
 # [] seperate function that generates some graphs ?
 
 #end result you want is modular clean code that cals the trueskill rating of teams for a given dataset and can then be used to predict the probabilty
