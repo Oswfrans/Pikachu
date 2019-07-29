@@ -31,7 +31,7 @@ if __name__ == "__main__":
 # [x] seperate and define all lol-specific stuff in configurable values
 # [x] seperate stuff over files and functions
 # [x] write docstrings for all the functions
-# [] update docstrings to google format
+# [x] update docstrings to google format
 # [/] make everything pipenv and good
 # [x] make the code year agnostic
 # [x] make sure all hardcoded stuff is seperated out
