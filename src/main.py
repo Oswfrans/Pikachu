@@ -4,6 +4,7 @@ from Pikachu.elo_config import path, positions1, positions2
 import pandas as pd
 import trueskill
 
+
 def main():
     #!!!!
     #figure out how to pass args and
