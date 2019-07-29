@@ -18,11 +18,13 @@ from Pikachu.elo_config import team1_tag_col, team2_tag_col, result_col
 
 
 def win_prob(rAlist=[Rating()], rBlist=[Rating()]):
-    """
-    Function that calculates the win probability of the two rating lists
-    rAlist :    list of ratings
-    rBlist :    list of ratings
-    return the probability that the first team will win as a float
+    """Function that calculates the win probability of the two rating lists
+    
+    Args:
+        rAlist :    list of ratings
+        rBlist :    list of ratings
+    Returns:
+        return the probability that the first team will win as a float
     """
     deltaMu = sum([x.mu for x in rAlist]) - sum([x.mu for x in rBlist])
     rsss = sqrt(
@@ -31,15 +33,17 @@ def win_prob(rAlist=[Rating()], rBlist=[Rating()]):
 
 
 def iter_frame(player_dict, dataframe, position1, position2):
-    """
-    Function that iterates over the specified dataframe of match results and 
+    """Function that iterates over the specified dataframe of match results and 
     updates the TrueSkill rating of the players in a dictionary object.
     Also results in lists that show the progression of the rating and predicitons over the matches
-    player_dict :   Dictionary object of the players and the Trueskill rating. This is updated throughout the function
-    dataframe :     Dataframe which contains the match result that are used to update the ratings
-    position1 :     Column names detailling the different players in team1
-    position2 :     Column names detailling the different players in team2
-    returns the updated player_dict, a list of matchresults and predictions and a list showing the progression of individual players
+    
+    Args:
+        player_dict :   Dictionary object of the players and the Trueskill rating. This is updated throughout the function
+        dataframe :     Dataframe which contains the match result that are used to update the ratings
+        position1 :     Column names detailling the different players in team1
+        position2 :     Column names detailling the different players in team2
+    Returns:
+        returns the updated player_dict, a list of matchresults and predictions and a list showing the progression of individual players
     """
     progression_list = []
     progression_players = []
@@ -71,13 +75,15 @@ def iter_frame(player_dict, dataframe, position1, position2):
 
 #function that creates new rating groups
 def update_elo(first_win, envir, team1, team2):
-    """
-    Function that updates the rating objects based on who won
+    """Function that updates the rating objects based on who won
     first_win : boolean that is 1 if team1 won and 0 if team 2 won
-    envir :     Trueskill environment object
-    team1 :     list of rating objects of the players of the first team
-    team2 :     list of rating object of the players of the second team
-    returns a list of list of updated ratings of the players
+    
+    Args:
+        envir :     Trueskill environment object
+        team1 :     list of rating objects of the players of the first team
+        team2 :     list of rating object of the players of the second team
+    Returns:
+        returns a list of list of updated ratings of the players
     """
     if first_win == 1:
         rating_groups = envir.rate([team1, team2], ranks=[0, 1])
@@ -88,11 +94,14 @@ def update_elo(first_win, envir, team1, team2):
 
 
 def save_ratings(groups, players, p_dict):
-    """
-    Function that updates the players dictionary with the new rating objects.
-    groups :        a nested list of the new rating objects
-    players :       List of players that have new ratings
-    player_dict :   dictionary of players and their ratings, which you update 
+    """Function that updates the players dictionary with the new rating objects.
+    
+    Args:
+        groups :        a nested list of the new rating objects
+        players :       List of players that have new ratings
+        player_dict :   dictionary of players and their ratings, which you update 
+    Returns:
+        Updated player dictionary
     """
     # save new ratings
     i = 0
