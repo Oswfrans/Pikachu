@@ -19,7 +19,7 @@ from Pikachu.elo_config import team1_tag_col, team2_tag_col, result_col
 
 def win_prob(rAlist=[Rating()], rBlist=[Rating()]):
     """Function that calculates the win probability of the two rating lists
-    
+
     Args:
         rAlist :    list of ratings
         rBlist :    list of ratings
@@ -33,10 +33,10 @@ def win_prob(rAlist=[Rating()], rBlist=[Rating()]):
 
 
 def iter_frame(player_dict, dataframe, position1, position2):
-    """Function that iterates over the specified dataframe of match results and 
+    """Function that iterates over the specified dataframe of match results and
     updates the TrueSkill rating of the players in a dictionary object.
     Also results in lists that show the progression of the rating and predicitons over the matches
-    
+
     Args:
         player_dict :   Dictionary object of the players and the Trueskill rating. This is updated throughout the function
         dataframe :     Dataframe which contains the match result that are used to update the ratings
@@ -77,7 +77,7 @@ def iter_frame(player_dict, dataframe, position1, position2):
 def update_elo(first_win, envir, team1, team2):
     """Function that updates the rating objects based on who won
     first_win : boolean that is 1 if team1 won and 0 if team 2 won
-    
+
     Args:
         envir :     Trueskill environment object
         team1 :     list of rating objects of the players of the first team
@@ -95,13 +95,13 @@ def update_elo(first_win, envir, team1, team2):
 
 def save_ratings(groups, players, p_dict):
     """Function that updates the players dictionary with the new rating objects.
-    
+
     Args:
         groups :        a nested list of the new rating objects
         players :       List of players that have new ratings
-        player_dict :   dictionary of players and their ratings, which you update 
+        player_dict :   dictionary of players and their ratings, which you update
     Returns:
-        Updated player dictionary
+        Updated player
     """
     # save new ratings
     i = 0
