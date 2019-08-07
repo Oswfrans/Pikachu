@@ -6,6 +6,11 @@ import pandas as pd
 from Pikachu.data_prep import stack_it, prep_dict
 from Pikachu.rating_util import win_prob,iter_frame, save_ratings,update_elo
 from trueskill import Rating
+#double check if necessary
+import math
+from math import sqrt
+from scipy import stats
+from scipy.stats import norm
 
 def smoke_test():
     #placeholder value
@@ -23,36 +28,37 @@ def smoke_test():
     assert (win_prob(TSM, Cloud9) == from_file)
 
 
-#how do I do relative paths for my tests!
-#!!!!
-#!!!!!!
-
 #data prep
 
 #test for stackit function
 def test_stack_it():
-    results = pd.read_csv(from_file)
-    sample = pd.read_csv(sample)
+    sample = pd.DataFrame([["Doublelift","Hauntzer","Bjergsen", "Reginald","Xpecial",
+	"Perkz", "Amazing","Lodnen","Miky","Farza"]], columns=["blueTop", "blueMiddle", "blueJungle", "blueADC", "blueSupport", "redTop", "redMiddle", "redJungle", "redADC", "redSupport"])
+    results = pd.DataFrame([["Doublelift"],["Hauntzer"],["Bjergsen"], ["Reginald"],["Xpecial"],
+	["Perkz"], ["Amazing"],["Lodnen"],["Miky"],["Farza"]], columns=["player"])
+    #results = pd.read_csv(from_file)
+    #sample = pd.read_csv(sample)
     assert(stack_it(sample)==results)
 
 #test for playerdict function
 def test_prep_dict():
-    with open('myfile.txt','r') as inf:
-        example_dict = eval(inf.read())
-        stacked_csv = pd.read_csv(from_file2)
-        assert(prep_dict(stack_csv)==example_dict)
+    stacked = pd.DataFrame([["Doublelift"],["Hauntzer"],["Bjergsen"], ["Reginald"],["Xpecial"],
+	["Perkz"], ["Amazing"],["Lodnen"],["Miky"],["Farza"]], columns=["player"]) 
+
+    dict1 = {"Doublelift": Rating(),"Hauntzer": Rating(),"Bjergsen": Rating(),
+    "Reginald": Rating(),"Xpecial": Rating(),
+    "Perkz": Rating(), "Amazing":Rating(),"Lodnen": Rating(),"Miky":Rating(),"Farza": Rating()}
+
+    assert(prep_dict(stacked)==dict1)
 
 #rating util function
 
-#test for win_prob function
-#need to fix the probabilities chosen
-#!!!!!!!
 def test_win_prob():
-    probability= 0.80
-    assert(win_prob([Rating(30, 3)], [20, 2])== probability)
+    probability= 0.997227166342378
+    assert(win_prob([Rating(30, 3)], [Rating(20, 2)])== probability)
 
 #test for iter_frame function
-def test_iter_frame():
+#def test_iter_frame():
 
 #test for update_elo function
 def test_update_elo():
