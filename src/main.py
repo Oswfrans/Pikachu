@@ -26,19 +26,9 @@ if __name__ == "__main__":
 
 #at the end return two dataframes, player ratings and progressionlist (maybe player progression?)
 
-# [x] streamline the win probablity function
-# [x] Save player progression information ??
-# [x] seperate and define all lol-specific stuff in configurable values
-# [x] seperate stuff over files and functions
-# [x] write docstrings for all the functions
-# [x] update docstrings to google format
-# [/] make everything pipenv and good
-# [x] make the code year agnostic
-# [x] make sure all hardcoded stuff is seperated out
-# [x] add correct structure
-# [] add tests
+
 # [] add coverage % for the tests
-# [x] add pipenv structure to ensure correct dependencies
+# [] ?makefile
 # [] seperate function that generates some graphs ?
 
 #end result you want is modular clean code that cals the trueskill rating of teams for a given dataset and can then be used to predict the probabilty
